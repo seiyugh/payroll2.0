@@ -21,10 +21,9 @@ class AppServiceProvider extends ServiceProvider
 
      public function boot()
      {
-         if ($this->app->environment('production')) {
+         // Force HTTPS regardless of environment if we're on the production domain
+         if (str_contains(request()->getHost(), 'railway.app')) {
              URL::forceScheme('https');
-             
-             // For Inertia.js specifically
              $this->app['request']->server->set('HTTPS', 'on');
          }
      }

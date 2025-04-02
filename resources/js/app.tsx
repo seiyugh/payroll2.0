@@ -4,18 +4,30 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createRoot } from "react-dom/client";
 import { initializeTheme } from "./hooks/use-appearance";
 import { Toaster } from "sonner";
-import axios from "axios"; // Import axios directly
+import axios from "axios";
+
+// Type declarations for environment variables
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_APP_NAME?: string;
+      VITE_APP_URL?: string;
+      PROD?: boolean;
+    };
+  }
+}
 
 const appName = import.meta.env.VITE_APP_NAME || "AICOM Marketing Services";
 
-// Configure axios before creating Inertia app
-axios.defaults.baseURL = import.meta.env.VITE_APP_URL || window.location.origin;
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// Safe URL configuration with type checking
+const baseURL = (() => {
+  const url = import.meta.env.VITE_APP_URL || window.location.origin;
+  return import.meta.env.PROD ? url.toString().replace('http://', 'https://') : url;
+})();
 
-// Ensure all links use HTTPS
-if (import.meta.env.PROD) {
-  axios.defaults.baseURL = axios.defaults.baseURL.toString().replace('http://', 'https://');
-}
+// Configure axios with proper types
+axios.defaults.baseURL = baseURL;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,
@@ -34,4 +46,5 @@ createInertiaApp({
   },
 });
 
-// Initialize dark/light mode
+// Initialize theme
+initializeTheme();
