@@ -30,5 +30,9 @@ export default defineConfig({
     },
     build: {
         assetsInlineLimit: 0,
+        manifest: true, // Ensure manifest is generated
+    },
+    define: {
+        'import.meta.env.VITE_APP_URL': JSON.stringify(process.env.APP_URL || 'https://payroll20-production.up.railway.app'),
     },
 });
