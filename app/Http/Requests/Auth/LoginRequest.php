@@ -40,26 +40,26 @@ class LoginRequest extends FormRequest
      *
      * @throws \Illuminate\Validation\ValidationException
      */
- public function authenticate(): void
-{
-    $this->ensureIsNotRateLimited();
-
-    // Find user by employee_number
-    $user = User::whereRaw("BINARY employee_number = ?", [$request->input('employee_number')])->first();
-
-    if (!$user || !Hash::check($this->input('password'), $user->password_hash)) {
-        RateLimiter::hit($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'employee_number' => __('auth.failed'),
-        ]);
+    public function authenticate(): void
+    {
+        $this->ensureIsNotRateLimited();
+    
+        // FIXED: Changed $request to $this
+        $user = User::whereRaw("BINARY employee_number = ?", [$this->input('employee_number')])->first();
+    
+        if (!$user || !Hash::check($this->input('password'), $user->password_hash)) {
+            RateLimiter::hit($this->throttleKey());
+    
+            throw ValidationException::withMessages([
+                'employee_number' => __('auth.failed'),
+            ]);
+        }
+    
+        // Log in the user
+        Auth::login($user, $this->boolean('remember'));
+    
+        RateLimiter::clear($this->throttleKey());
     }
-
-    // Log in the user
-    Auth::login($user, $this->boolean('remember'));
-
-    RateLimiter::clear($this->throttleKey());
-}
     /**
      * Ensure the login request is not rate limited.
      *

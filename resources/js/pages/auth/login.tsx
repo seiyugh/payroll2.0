@@ -59,6 +59,9 @@ export default function Login({ status, canResetPassword, csrf_token }: LoginPro
         ...data,
         _token: csrf_token,
       },
+      headers: {
+        'X-CSRF-TOKEN': csrf_token
+      },
       onFinish: () => reset("password"),
       onError: (errors) => {
         if (errors._token) {
@@ -200,4 +203,3 @@ export default function Login({ status, canResetPassword, csrf_token }: LoginPro
     </AuthLayout>
   )
 }
-

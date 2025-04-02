@@ -29,22 +29,14 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
- public function store(LoginRequest $request): RedirectResponse
-{
-    $user = User::where('employee_number', $request->input('employee_number'))->first();
-
-    if (!$user || !Hash::check($request->input('password'), $user->password_hash)) {
-        return back()->withErrors([
-            'employee_number' => 'Invalid employee number or password.',
-        ])->onlyInput('employee_number');
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
+        
+        $request->session()->regenerate();
+    
+        return redirect()->intended(route('dashboard', absolute: false));
     }
-
-    Auth::login($user, $request->boolean('remember'));
-
-    $request->session()->regenerate();
-
-    return redirect()->intended(route('dashboard', absolute: false));
-}
 
 
     /**
