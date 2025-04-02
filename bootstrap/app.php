@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance']);
+        
+        // Explicitly add VerifyCsrfToken middleware
+        $middleware->append(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 
         $middleware->web(append: [
             HandleAppearance::class,

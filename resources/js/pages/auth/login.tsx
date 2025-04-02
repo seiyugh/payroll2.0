@@ -55,13 +55,8 @@ export default function Login({ status, canResetPassword, csrf_token }: LoginPro
   const submit: FormEventHandler = (e) => {
     e.preventDefault()
     post(route("login"), {
-      data: {
-        ...data,
-        _token: csrf_token,
-      },
-      headers: {
-        'X-CSRF-TOKEN': csrf_token
-      },
+      // With Inertia.js, you typically don't need to manually add the token
+      // It should be handled automatically
       onFinish: () => reset("password"),
       onError: (errors) => {
         if (errors._token) {
