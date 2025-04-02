@@ -7,7 +7,10 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
+            input: [
+                'resources/css/app.css', 
+                'resources/js/app.tsx'
+            ],
             ssr: 'resources/js/ssr.tsx',
             refresh: true,
         }),
@@ -29,10 +32,21 @@ export default defineConfig({
         }
     },
     build: {
+        manifest: true,
+        outDir: 'public/build',
+        emptyOutDir: true,
         assetsInlineLimit: 0,
-        manifest: true, // Ensure manifest is generated
+        rollupOptions: {
+            output: {
+                entryFileNames: `assets/[name]-[hash].js`,
+                chunkFileNames: `assets/[name]-[hash].js`,
+                assetFileNames: `assets/[name]-[hash][extname]`,
+            }
+        }
     },
     define: {
-        'import.meta.env.VITE_APP_URL': JSON.stringify(process.env.APP_URL || 'https://payroll20-production.up.railway.app'),
+        'import.meta.env.VITE_APP_URL': JSON.stringify(
+            process.env.APP_URL || 'https://payroll20-production.up.railway.app'
+        ),
     },
 });
